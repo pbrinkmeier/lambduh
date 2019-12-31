@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+        <style>
+        div { // outline: 1px dotted grey; }
+
+        /* structure */
+
+        .compare {
+            display: flex;
+        }
+
+        .bigg {
+            flex: 2;
+            font-size: 3em;
+        }
+
+        .smol {
+            flex: 1;
+        }
+
+        .bigg, .smol {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* rules */
+
+        .rule {
+            font-family: 'Fira Sans';
+            font-weight: 300;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .rule-name {
+            font-variant: small-caps;
+            padding-bottom: 1em;
+        }
+
+        .rule-reqs {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            /* hmm */
+            padding-bottom: .1em;
+        }
+
+        .rule-req {
+        }
+
+        .rule-req:not(:first-child) {
+            margin-left: .5em;
+        }
+
+        .rule-conc {
+            border-top: 0.0625em solid;
+            /* hmm */
+            padding-top: .2em;
+            text-align: center;
+        }
+
+        /* text */
+
+        .type.-const {
+            font-family: 'Fira Sans';
+        }
+
+        .type.-var {
+            font-family: 'Fira Sans';
+        }
+
+        .type-var-num {
+            vertical-align: sub;
+            font-size: .8em;
+        }
+
+        .id {
+            font-family: Courier;
+            font-weight: 400;
+            font-size: 1.25em;
+            /* otherwise the whole layout breaks */
+            line-height: 0.8em;
+        }
+
+        </style>
+    </head>
+    <body>
+        <div class="compare">
+            <div class="smol"></div>
+            <div class="bigg">
+                <div class="rule">
+                    <div class="rule-contents">
+                    <div class="rule-reqs">
+                        <div class="rule-req">
+                            <div class="rule">
+                                <div class="rule-contents">
+                                    <div class="rule-reqs">
+                                        <div class="rule-req">&Gamma;(<span class="id">f</span>) = <span class="type -var">&beta;</span></div>
+                                    </div>
+                                    <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> : <span class="type -var">&alpha;<span class="type-var-num">2</span></span></div>
+                                </div>
+                                <div class="rule-name">Var</div>
+                            </div>
+                        </div>
+                        <div class="rule-req">
+                            <div class="rule">
+                                <div class="rule-contents">
+                                    <div class="rule-reqs">
+                                        <div class="rule-req">&Gamma;(<span class="id">x</span>) = <span class="type -var">&gamma;</span></div>
+                                    </div>
+                                    <div class="rule-conc">&Gamma; ⊢ <span class="id">x</span> : <span class="type -var">&alpha;<span class="type-var-num">3</span></span></div>
+                                </div>
+                                <div class="rule-name">Var</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> <span class="id">x</span> : <span class="type -var" >&alpha;<span class="type-var-num">1</span></span></div>
+                    </div>
+                    <div class="rule-name">App</div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        document.querySelector('.smol').innerHTML = document.querySelector('.bigg').innerHTML;
+    </script>
+</html>
