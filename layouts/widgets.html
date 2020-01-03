@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+        <style>
+        div { // outline: 1px dotted grey; }
+
+        /* https://flatuicolors.com/palette/defo */
+        :root {
+            --wa: #34495e;
+            --mb: #2c3e50;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Fira Sans';
+            background-color: var(--wa);
+        }
+
+        /* structure */
+
+        .container {
+            width: 720px;
+            margin: auto;
+        }
+
+        .ll-frame {
+            height: 100vh;
+        }
+
+        .ll-topbar {
+            background-color: var(--mb);
+            padding: .5em 0;
+        }
+
+        .ll-topbar h1 {
+            margin: 0;
+            font-weight: 300;
+            color: white;
+        }
+
+        .ll-init {
+            padding: .25em;
+        }
+
+        .ll-init > .container {
+            display: flex;
+        }
+
+        .ll-init input {
+            display: block;
+            flex: 1;
+            color: white;
+            border: none;
+            border-bottom: 1px solid;
+            background-color: transparent;
+            padding: .1em;
+            font-size: 1.2em;
+            box-sizing: border-box;
+        }
+
+        .ll-init button {
+            display: block;
+            margin-left: .5em;
+        }
+
+        .ll-widgets {
+        }
+
+        .ll-widget {
+            margin: 1em 0;
+            background-color: #ecf0f1;
+        }
+
+        .widget-title {
+            font-size: .8em;
+            padding: .1em;
+            color: #7f8c8d;
+        }
+
+        .widget-id,
+        .widget-dep {
+            font-family: Courier;
+            color: #111;
+        }
+
+        .widget-content {
+            padding: .5em;
+            text-align: center;
+        }
+
+        .widget-controls {
+            padding: .1em;
+            text-align: right;
+        }
+
+        .constraints {
+            margin: 0 auto;
+        }
+
+        .cr.-lhs,
+        .cr.-rhs {
+            text-align: left;
+            padding: 0 .2em;
+        }
+
+        /* rules */
+
+        .rule {
+            font-family: 'Fira Sans';
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .rule-name {
+            font-variant: small-caps;
+            padding-bottom: 1em;
+        }
+
+        .rule-reqs {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            /* hmm */
+            padding-bottom: .1em;
+        }
+
+        .rule-req {
+        }
+
+        .rule-req:not(:first-child) {
+            margin-left: .5em;
+        }
+
+        .rule-conc {
+            border-top: 0.0625em solid;
+            /* hmm */
+            padding-top: .2em;
+            text-align: center;
+        }
+
+        /* text */
+
+        .type.-const {
+            font-family: 'Fira Sans';
+        }
+
+        .type.-var {
+            font-family: 'Fira Sans';
+        }
+
+        .type-var-num {
+            vertical-align: sub;
+            font-size: .8em;
+        }
+
+        .id {
+            font-family: Courier;
+            font-weight: 400;
+            font-size: 1.25em;
+            /* otherwise the whole layout breaks */
+            line-height: 0.8em;
+        }
+
+        </style>
+    </head>
+    <body>
+        <div class="ll-frame">
+            <div class="ll-topbar">
+                <div class="container">
+                    <h1>lambduh</h1>
+                </div>
+            </div>
+            <div class="ll-init">
+                <div class="container">
+                    <input type="text" value="\x.\y.x">
+                    <button>+ term</button>
+                </div>
+            </div>
+            <div class="ll-widgets">
+                <div class="container">
+                    <div class="ll-widget term">
+                        <div class="widget-title"><span class="widget-id">01</span> :: Term</div>
+                        <div class="widget-content term-display">
+                            <span class="id">f</span> <span class="id">x</span>
+                        </div>
+                        <div class="widget-controls">
+                            <button>+ eval</button>
+                            <button>+ tree</button>
+                        </div>
+                    </div>
+                    <div class="ll-widget tree">
+                        <div class="widget-title"><span class="widget-id">02</span> :: Tree of <span class="widget-dep">01</span></div>
+                        <div class="widget-content tree-display">
+                            <div class="rule">
+                                <div class="rule-contents">
+                                <div class="rule-reqs">
+                                    <div class="rule-req">
+                                        <div class="rule">
+                                            <div class="rule-contents">
+                                                <div class="rule-reqs">
+                                                    <div class="rule-req">&Gamma;(<span class="id">f</span>) = <span class="type -var">&beta;</span></div>
+                                                </div>
+                                                <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> : <span class="type -var">&alpha;<span class="type-var-num">2</span></span></div>
+                                            </div>
+                                            <div class="rule-name">Var</div>
+                                        </div>
+                                    </div>
+                                    <div class="rule-req">
+                                        <div class="rule">
+                                            <div class="rule-contents">
+                                                <div class="rule-reqs">
+                                                    <div class="rule-req">&Gamma;(<span class="id">x</span>) = <span class="type -var">&gamma;</span></div>
+                                                </div>
+                                                <div class="rule-conc">&Gamma; ⊢ <span class="id">x</span> : <span class="type -var">&alpha;<span class="type-var-num">3</span></span></div>
+                                            </div>
+                                            <div class="rule-name">Var</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> <span class="id">x</span> : <span class="type -var" >&alpha;<span class="type-var-num">1</span></span></div>
+                                </div>
+                                <div class="rule-name">App</div>
+                            </div>
+                        </div>
+                        <div class="widget-controls">
+                            <button>+ constraints</button>
+                        </div>
+                    </div>
+                    <div class="ll-widget">
+                        <div class="widget-title"><span class="widget-id">03</span> :: Constraints of <span class="widget-dep">02</span></div>
+                        <div class="widget-content">
+                            <table class="constraints">
+                                <tr class="constraint">
+                                    <td class="cr -begin">{</td>
+                                    <td class="cr -lhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></td>
+                                    <td class="cr -eq">=</td>
+                                    <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span> &rarr; <span class="type -var">&alpha;<span class="type-var-num">1</span></td>
+                                </tr>
+                                <tr class="constraint">
+                                    <td class="cr -begin">,</td>
+                                    <td class="cr -lhs"><span class="type -var">&beta;</span></td>
+                                    <td class="cr -eq">=</td>
+                                    <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></span></td>
+                                </tr>
+                                <tr class="constraint">
+                                    <td class="cr -begin">,</td>
+                                    <td class="cr -lhs"><span class="type -var">&gamma;</span></td>
+                                    <td class="cr -eq">=</td>
+                                    <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span></span></td>
+                                </tr>
+                                <tr class="constraint">
+                                    <td class="cr -begin">}</td>
+                                    <td class="cr -lhs"></td>
+                                    <td class="cr -eq"></td>
+                                    <td class="cr -rhs"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="widget-controls">
+                            <button>+ mgu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
