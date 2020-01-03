@@ -1,0 +1,20 @@
+/* buttons, fonts, variables, etc. */
+
+@import url(https://code.cdn.mozilla.net/fonts/fira.css);
+
+:root {
+    --white: #fefefe;
+    --black: #111;
+
+    /* colors: https://flatuicolors.com/palette/defo */
+    --ll-topbar-bg: #2c3e50;
+    --page-bg: #34495e;
+    --widget-bg: #ecf0f1;
+    --widget-title-color: #7f8c8d;
+}
+
+body {
+    margin: 0;
+    background-color: var(--page-bg);
+    font-family: 'Fira Sans';
+}

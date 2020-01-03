@@ -1,0 +1,95 @@
+/* overall page structure */
+
+.container {
+    width: 720px;
+    margin: 0 auto;
+}
+
+.ll {
+}
+
+/* topbar: title, later maybe some links */
+
+.ll-topbar {
+    background-color: var(--ll-topbar-bg);
+}
+
+.ll-topbar-title {
+    margin: 0;
+    padding: .2em 0;
+    font-weight: 300;
+    color: var(--white);
+}
+
+/*
+ * init: allows user to add a term widget for inspection
+ * the input element may be replaced by a textarea at some point
+ */
+
+.ll-init {
+    display: flex;
+    margin-top: 1em;
+}
+
+.ll-init-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid;
+    color: var(--white);
+    background-color: rgba(0, 0, 0, .05);
+    box-sizing: border-box;
+    padding: .2em;
+    font-size: 1.2em;
+}
+
+.ll-init-addterm {
+    margin-left: .5em;
+}
+
+/* widgets: basically the whole content */
+
+.ll-widgets {
+}
+
+.ll-widget {
+    margin-top: 1em;
+    padding: .25em;
+    background-color: var(--widget-bg);
+}
+
+.ll-widget-title {
+    display: flex;
+    color: var(--widget-title-color);
+    font-size: .8em;
+}
+
+.ll-widget-title-text {
+    flex: 1;
+}
+
+.ll-widget-title-id {
+    font-family: 'Fira Code';
+    color: var(--black);
+}
+
+.ll-widget-title-remove {
+    cursor: pointer;
+    user-select: none;
+}
+
+.ll-widget-title-remove:hover {
+    color: #e74c3c;
+}
+
+.ll-widget-content {
+    margin-top: .2em;
+    text-align: center;
+}
+
+.ll-widget-controls {
+}
+
+.ll-widget-control {
+    margin-top: .25em;
+    text-align: right;
+}

@@ -1,15 +1,43 @@
-module Model exposing (Model, Msg(..), initialModel, update)
+module Model exposing (Model, initialModel, update)
+
+import Dict exposing (Dict)
+import Widget exposing (Widget)
+import Parser
+import LambdaParsers
+import Msg exposing (Msg(..))
 
 type alias Model =
-    { source : String
+    -- starting point for interaction. the user can enter a string that will
+    -- be parsed as a lambda term for a term widget
+    { termSource : String
+    , widgets : Dict Int Widget
+    , nextId : Int
     }
 
-type Msg
-    = SetSource String
-
-initialModel = { source = "" }
+initialModel = { termSource = "\\f.\\g.\\x.f (g x)", widgets = Dict.empty, nextId = 1 }
 
 update msg model =
     case msg of
-        SetSource s ->
-            { model | source = s }
+        SetTermSource s ->
+            { model | termSource = s }
+        TryAddTerm ->
+            case Parser.run LambdaParsers.term model.termSource of
+                Err e -> Debug.todo <| Debug.toString e
+                Ok term -> addWidget (Widget.initTerm term) model
+        RemoveWidget i ->
+            { model | widgets = Dict.remove i model.widgets }
+
+        AddEvaluationWidget _ _ ->
+            Debug.todo "Not implemented"
+
+        AddTreeWidget _ _ ->
+            Debug.todo "Not implemented"
+
+addWidget initialize model =
+    { model
+        | widgets = Dict.insert
+            model.nextId
+            (initialize model.nextId)
+            model.widgets
+        , nextId = model.nextId + 1
+    }

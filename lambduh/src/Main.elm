@@ -3,8 +3,9 @@ module Main exposing (main)
 import Browser
 import Model
 import View
+import Msg
 
-init : () -> (Model.Model, Cmd Model.Msg)
+init : () -> (Model.Model, Cmd Msg.Msg)
 init () = (Model.initialModel, Cmd.none)
 
 
