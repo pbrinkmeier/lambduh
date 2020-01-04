@@ -1,9 +1,10 @@
-module Widget exposing (viewTitle, viewContent, Widget, initTerm, viewControls)
+module Widget exposing (viewTitle, viewContent, Widget, initTerm, initTree, viewControls)
 
 import Html exposing (Html, span, text, div, button)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Lambda
+import LambdaTypes
 import Msg exposing (Msg(..))
 
 type alias Widget =
@@ -13,11 +14,13 @@ type alias Widget =
 
 type InnerWidget
     = TermWidget Lambda.Term
+    | TreeWidget LambdaTypes.Tree
 
 title : InnerWidget -> String
 title widget =
     case widget of
         TermWidget _ -> "Term"
+        TreeWidget _ -> "Tree"
 
 possibleActions : Widget -> List (String, Msg)
 possibleActions widget =
@@ -27,6 +30,9 @@ possibleActions widget =
                 TermWidget term ->
                     [ ("+ eval", AddEvaluationWidget term)
                     , ("+ tree", AddTreeWidget term)
+                    ]
+                TreeWidget _ ->
+                    [
                     ]
     in
     List.map (\(l, f) -> (l, f widget.id)) pas
@@ -53,12 +59,16 @@ viewContent : Widget -> List (Html a)
 viewContent widget =
     case widget.inner of
         TermWidget term -> [ Lambda.viewTerm term ]
+        TreeWidget tree -> [ LambdaTypes.viewTree tree ]
 
 initTerm : Lambda.Term -> Int -> Widget
 initTerm term id =
     { id = id
     , inner = TermWidget term
     }
+
+initTree tree id =
+    Widget id <| TreeWidget tree
 
 viewControls : Widget -> List (Html Msg)
 viewControls =

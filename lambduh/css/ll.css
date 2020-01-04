@@ -82,8 +82,18 @@
 }
 
 .ll-widget-content {
+    display: flex;
     margin-top: .2em;
-    text-align: center;
+    overflow-x: scroll;
+
+    /* literally no browser compat except for FF */
+    scrollbar-color: rgba(0, 0, 0, 0.3) var(--widget-bg);
+    scrollbar-width: thin;
+}
+
+/* center content without breaking on overflow */
+.ll-widget-content-wrapper {
+    margin: auto;
 }
 
 .ll-widget-controls {

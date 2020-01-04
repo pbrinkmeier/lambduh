@@ -1,0 +1,44 @@
+.rule {
+    font-weight: 300;
+    display: flex;
+    align-items: flex-end;
+    white-space: nowrap;
+}
+
+.rule-name {
+    font-variant: small-caps;
+    padding-bottom: 1em;
+}
+
+.rule-reqs {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    /* hmm */
+    padding-bottom: .1em;
+}
+
+.rule-req {
+}
+
+.rule-req:not(:first-child) {
+    margin-left: .5em;
+}
+
+.rule-conc {
+    border-top: 0.0625em solid;
+    /* hmm */
+    padding-top: .2em;
+    text-align: center;
+}
+
+/* text */
+
+.type-var {
+    font-family: 'Fira Sans';
+}
+
+.type-var-id {
+    vertical-align: sub;
+    font-size: .8em;
+}

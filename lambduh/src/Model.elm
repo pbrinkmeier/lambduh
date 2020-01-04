@@ -5,6 +5,7 @@ import Widget exposing (Widget)
 import Parser
 import LambdaParsers
 import Msg exposing (Msg(..))
+import LambdaTypes
 
 type alias Model =
     -- starting point for interaction. the user can enter a string that will
@@ -27,11 +28,12 @@ update msg model =
         RemoveWidget i ->
             { model | widgets = Dict.remove i model.widgets }
 
+        -- additional param: "parent" widget, not relevant yet
         AddEvaluationWidget _ _ ->
             Debug.todo "Not implemented"
 
-        AddTreeWidget _ _ ->
-            Debug.todo "Not implemented"
+        AddTreeWidget term _ ->
+            addWidget (Widget.initTree <| LambdaTypes.generateTree term) model
 
 addWidget initialize model =
     { model
