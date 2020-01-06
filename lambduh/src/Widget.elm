@@ -9,7 +9,7 @@ module Widget exposing
     , viewControls
     )
 
-import Html exposing (Html, span, text, div, button)
+import Html exposing (Html, span, text, div, button, pre)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Lambda
@@ -81,7 +81,7 @@ viewContent widget =
         TermWidget term -> [ Lambda.viewTerm term ]
         TreeWidget tree -> [ LambdaTypes.viewTree tree ]
         ConstraintsWidget constraints -> [ LambdaTypes.viewConstraints constraints ]
-        UnificationWidget _ _ -> []
+        UnificationWidget _ h -> [ pre [] [ text <| Debug.toString h ] ]
 
 -- This ugly stuff may be used in the future for FRP-kind stuff
 -- Or maybe I'll delete it, idk

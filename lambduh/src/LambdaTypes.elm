@@ -1,6 +1,7 @@
 module LambdaTypes exposing
     ( Tree
-    , Type
+    , Type(..)
+    , fv
     , TypeVariable
     , generateTree
     , viewTree
@@ -43,6 +44,16 @@ type TypeVariable
     -- They are displayed as `\tau_{x}`, read: "Type of `x`"
     | Named String
     -- Type of a function that maps the left type to the right one
+
+-- May contain duplicates (not relevant)
+-- Reason: `Set` needs its elements to be comparable
+fv : Type -> List TypeVariable
+fv t =
+    case t of
+        TypeVar tv ->
+            [ tv ]
+        FunctionType a b ->
+            (fv a) ++ (fv b)
 
 viewType t =
     case t of
