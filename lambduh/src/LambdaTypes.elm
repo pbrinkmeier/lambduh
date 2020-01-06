@@ -132,7 +132,7 @@ viewTree { context, term, termType, inner } =
         viewRuleReqs node =
             case node of
                 VarNode varName lookupResult ->
-                    -- todo
+                    -- TODO: make ugly code at least a bit nicer
                     List.singleton <| span []
                         <| List.concat
                         <|
