@@ -88,6 +88,7 @@
 
 .ll-widget-content-column {
     display: flex;
+    flex-direction: column;
     flex: 1;
     overflow-x: scroll;
 

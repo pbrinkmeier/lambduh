@@ -105,20 +105,21 @@ zeroPad i str =
 viewContent : Widget -> List (Html a)
 viewContent widget =
     let
+        columnContents : List (List (Html a))
         columnContents =
             case widget.inner of
-                TermWidget term -> [ Lambda.viewTerm term ]
-                TreeWidget tree -> [ LambdaTypes.viewTree tree ]
-                ConstraintsWidget constraints -> [ LambdaTypes.viewConstraints constraints ]
+                TermWidget term -> [ [ Lambda.viewTerm term ] ]
+                TreeWidget tree -> [ [ LambdaTypes.viewTree tree ] ]
+                ConstraintsWidget constraints -> [ [ LambdaTypes.viewConstraints constraints ] ]
                 UnificationWidget current history ->
                     case Dict.get current history of
-                        Nothing -> [ text "Nothing here :(" ]
+                        Nothing -> [ [ text "Nothing here :(" ] ]
                         Just historyEntry -> LambdaTypes.viewHistoryEntry historyEntry
 
-        viewColumn element =
-            div [ class "ll-widget-content-column" ]
-                [ div [ class "ll-widget-content-wrapper" ] [ element ]
-                ]
+        viewColumn : List (Html a) -> Html a
+        viewColumn elements =
+            div [ class "ll-widget-content-column" ] <|
+                List.map (\e -> div [ class "ll-widget-content-wrapper" ] [e]) elements
     in
         List.map viewColumn columnContents
 

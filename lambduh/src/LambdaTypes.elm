@@ -465,7 +465,7 @@ unifyStep constraints =
         [] -> Ok ([], Nothing)
         ({ lhs, rhs } :: rest) -> unifyLeftRightRest lhs rhs rest
 
-viewHistoryEntry : HistoryEntry -> List (Html a)
+viewHistoryEntry : HistoryEntry -> List (List (Html a))
 viewHistoryEntry entry =
     let
         constraints =
@@ -508,7 +508,21 @@ viewHistoryEntry entry =
                 , td [ class "substitution-rhs" ] []
                 ]
 
+        viewSubstitutedType tv =
+            case entry of
+                Ok { substitutions } ->
+                    [ div []
+                        [ viewType tv
+                        , text " = "
+                        , viewType <| applyUnifierToType substitutions tv
+                        ]
+                    ]
+                Err _ ->
+                    []
+
     in
-        [ viewConstraints constraints
-        , viewSubstitutionsOrErrorMsg
+        [ [ viewConstraints constraints ]
+        , [ viewSubstitutionsOrErrorMsg
+          , div [] <| viewSubstitutedType (TypeVar <| Numbered 1)
+          ]
         ]
