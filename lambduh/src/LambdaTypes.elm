@@ -33,6 +33,8 @@ type Type
     -- Named variables are used to denote variables that belong to free variables in a term
     -- They are displayed as `\tau_{x}`, read: "Type of `x`"
     | NamedTypeVariable String
+    -- Type of a function that maps the left type to the right one
+    | FunctionType Type Type
     -- TODO: const
 
 viewType t =
@@ -47,6 +49,18 @@ viewType t =
                 [ text "τ"
                 , span [ class "type-var-id" ] [ text name ]
                 ]
+        FunctionType f x ->
+            let
+                fHtml =
+                    case f of
+                        FunctionType _ _ -> parenthesize <| [ viewType f ]
+                        _                -> [ viewType f ]
+                xHtml = [ viewType x ]
+                parenthesize h =
+                    [ text "(" ] ++ h ++ [ text ")" ]
+            in
+                span [ class "type-func" ]
+                    <| fHtml ++ [ text " → " ] ++ xHtml
 
 -- Look for the rightmost appearance of identifier "needle" and return its type
 ctxLookup needle =
