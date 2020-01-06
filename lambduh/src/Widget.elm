@@ -18,7 +18,6 @@ import Html.Events exposing (onClick)
 import Lambda
 import LambdaTypes
 import Msg exposing (Msg(..))
-import Unification
 
 type alias Widget =
     { id : Int
@@ -29,7 +28,7 @@ type InnerWidget
     = TermWidget Lambda.Term
     | TreeWidget LambdaTypes.Tree
     | ConstraintsWidget LambdaTypes.Constraints
-    | UnificationWidget Int Unification.History
+    | UnificationWidget Int LambdaTypes.History
 
 title : InnerWidget -> String
 title widget =
@@ -114,7 +113,7 @@ viewContent widget =
                 UnificationWidget current history ->
                     case Dict.get current history of
                         Nothing -> [ text "Nothing here :(" ]
-                        Just historyEntry -> Unification.viewHistoryEntry historyEntry
+                        Just historyEntry -> LambdaTypes.viewHistoryEntry historyEntry
 
         viewColumn element =
             div [ class "ll-widget-content-column" ]

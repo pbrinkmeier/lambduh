@@ -6,7 +6,6 @@ import Parser
 import LambdaParsers
 import Msg exposing (Msg(..))
 import LambdaTypes
-import Unification
 
 type alias Model =
     -- starting point for interaction. the user can enter a string that will
@@ -24,12 +23,14 @@ update msg model =
             { model | termSource = s }
         TryAddTerm ->
             case Parser.run LambdaParsers.term model.termSource of
+                -- TODO: show error message (near input)
                 Err e -> Debug.todo <| Debug.toString e
                 Ok term -> addWidget (Widget.initTerm term) model
         RemoveWidget i ->
             { model | widgets = Dict.remove i model.widgets }
 
         -- additional param: "parent" widget, not relevant yet
+        -- TODO: add beta-reduction similar to unification widget
         AddEvaluationWidget _ _ ->
             Debug.todo "Not implemented"
 
@@ -40,7 +41,7 @@ update msg model =
             addWidget (Widget.initConstraints <| LambdaTypes.extractConstraints tree) model
 
         AddUnificationWidget constraints _ ->
-            addWidget (Widget.initUnification <| Unification.unifyStepByStep constraints) model
+            addWidget (Widget.initUnification <| LambdaTypes.unifyStepByStep constraints) model
 
         SetStep step widgetId ->
             { model | widgets = Dict.update widgetId (Maybe.map <| setStepInUnificationWidget step) model.widgets }
