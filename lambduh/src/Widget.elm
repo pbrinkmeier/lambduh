@@ -15,12 +15,14 @@ type alias Widget =
 type InnerWidget
     = TermWidget Lambda.Term
     | TreeWidget LambdaTypes.Tree
+    | ConstraintsWidget LambdaTypes.Constraints
 
 title : InnerWidget -> String
 title widget =
     case widget of
         TermWidget _ -> "Term"
         TreeWidget _ -> "Tree"
+        ConstraintsWidget _ -> "Constraints"
 
 possibleActions : Widget -> List (String, Msg)
 possibleActions widget =
@@ -31,8 +33,11 @@ possibleActions widget =
                     [ ("+ eval", AddEvaluationWidget term)
                     , ("+ tree", AddTreeWidget term)
                     ]
-                TreeWidget _ ->
-                    [
+                TreeWidget tree ->
+                    [ ("+ constraints", AddConstraintsWidget tree)
+                    ]
+                ConstraintsWidget constraints ->
+                    [ -- TODO
                     ]
     in
     List.map (\(l, f) -> (l, f widget.id)) pas
@@ -60,6 +65,7 @@ viewContent widget =
     case widget.inner of
         TermWidget term -> [ Lambda.viewTerm term ]
         TreeWidget tree -> [ LambdaTypes.viewTree tree ]
+        ConstraintsWidget constraints -> [ LambdaTypes.viewConstraints constraints ]
 
 initTerm : Lambda.Term -> Int -> Widget
 initTerm term id =

@@ -1,4 +1,11 @@
-module LambdaTypes exposing (Tree, generateTree, viewTree)
+module LambdaTypes exposing
+    ( Tree
+    , generateTree
+    , viewTree
+    , Constraints
+    , extractConstraints
+    , viewConstraints
+    )
 
 import Html exposing (Html, div, span, text)
 import Html.Attributes exposing (class)
@@ -144,3 +151,18 @@ ruleName node =
         VarNode _ _ -> "Var"
         AbsNode _ _ -> "Abs"
         AppNode _ _ -> "App"
+
+---- constraints stuff ----
+
+type alias Constraints = List Constraint
+
+type alias Constraint =
+    { lhs : Type
+    , rhs : Type
+    }
+
+extractConstraints : Tree -> Constraints
+extractConstraints _ = Debug.todo "Nothing here :("
+
+viewConstraints : Constraints -> Html a
+viewConstraints _ = Debug.todo "I N V I S I B L E"

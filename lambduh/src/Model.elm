@@ -35,6 +35,9 @@ update msg model =
         AddTreeWidget term _ ->
             addWidget (Widget.initTree <| LambdaTypes.generateTree term) model
 
+        AddConstraintsWidget tree _ ->
+            Debug.todo "Not implemented"
+
 addWidget initialize model =
     { model
         | widgets = Dict.insert
