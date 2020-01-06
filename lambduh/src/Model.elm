@@ -6,6 +6,7 @@ import Parser
 import LambdaParsers
 import Msg exposing (Msg(..))
 import LambdaTypes
+import Unification
 
 type alias Model =
     -- starting point for interaction. the user can enter a string that will
@@ -37,6 +38,9 @@ update msg model =
 
         AddConstraintsWidget tree _ ->
             addWidget (Widget.initConstraints <| LambdaTypes.extractConstraints tree) model
+
+        AddUnificationWidget constraints _ ->
+            addWidget (Widget.initUnification <| Unification.unifyStepByStep constraints) model
 
 addWidget initialize model =
     { model

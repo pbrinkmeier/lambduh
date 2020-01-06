@@ -10,3 +10,4 @@ type Msg
     | AddEvaluationWidget Lambda.Term Int
     | AddTreeWidget Lambda.Term Int
     | AddConstraintsWidget LambdaTypes.Tree Int
+    | AddUnificationWidget LambdaTypes.Constraints Int

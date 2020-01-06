@@ -1,8 +1,10 @@
 module LambdaTypes exposing
     ( Tree
+    , Type
     , generateTree
     , viewTree
     , Constraints
+    , Constraint
     , extractConstraints
     , viewConstraints
     )

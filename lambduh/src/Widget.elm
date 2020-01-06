@@ -1,4 +1,13 @@
-module Widget exposing (viewTitle, viewContent, Widget, initTerm, initTree, initConstraints, viewControls)
+module Widget exposing
+    ( viewTitle
+    , viewContent
+    , Widget
+    , initTerm
+    , initTree
+    , initConstraints
+    , initUnification
+    , viewControls
+    )
 
 import Html exposing (Html, span, text, div, button)
 import Html.Attributes exposing (class)
@@ -6,6 +15,7 @@ import Html.Events exposing (onClick)
 import Lambda
 import LambdaTypes
 import Msg exposing (Msg(..))
+import Unification
 
 type alias Widget =
     { id : Int
@@ -16,6 +26,7 @@ type InnerWidget
     = TermWidget Lambda.Term
     | TreeWidget LambdaTypes.Tree
     | ConstraintsWidget LambdaTypes.Constraints
+    | UnificationWidget Int Unification.History
 
 title : InnerWidget -> String
 title widget =
@@ -23,6 +34,7 @@ title widget =
         TermWidget _ -> "Term"
         TreeWidget _ -> "Tree"
         ConstraintsWidget _ -> "Constraints"
+        UnificationWidget _ _ -> "Unification"
 
 possibleActions : Widget -> List (String, Msg)
 possibleActions widget =
@@ -37,7 +49,10 @@ possibleActions widget =
                     [ ("+ constraints", AddConstraintsWidget tree)
                     ]
                 ConstraintsWidget constraints ->
-                    [ -- TODO
+                    [ ("+ unify", AddUnificationWidget constraints)
+                    ]
+                UnificationWidget _ _ ->
+                    [ -- TODO: maybe "apply unifier to alpha_1"?
                     ]
     in
     List.map (\(l, f) -> (l, f widget.id)) pas
@@ -66,7 +81,7 @@ viewContent widget =
         TermWidget term -> [ Lambda.viewTerm term ]
         TreeWidget tree -> [ LambdaTypes.viewTree tree ]
         ConstraintsWidget constraints -> [ LambdaTypes.viewConstraints constraints ]
-
+        UnificationWidget _ _ -> []
 
 -- This ugly stuff may be used in the future for FRP-kind stuff
 -- Or maybe I'll delete it, idk
@@ -78,6 +93,9 @@ initTree tree id =
 
 initConstraints constraints id =
     Widget id <| ConstraintsWidget constraints
+
+initUnification history id =
+    Widget id <| UnificationWidget 0 history
 
 viewControls : Widget -> List (Html Msg)
 viewControls =
