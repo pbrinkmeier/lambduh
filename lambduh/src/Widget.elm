@@ -1,4 +1,4 @@
-module Widget exposing (viewTitle, viewContent, Widget, initTerm, initTree, viewControls)
+module Widget exposing (viewTitle, viewContent, Widget, initTerm, initTree, initConstraints, viewControls)
 
 import Html exposing (Html, span, text, div, button)
 import Html.Attributes exposing (class)
@@ -67,14 +67,17 @@ viewContent widget =
         TreeWidget tree -> [ LambdaTypes.viewTree tree ]
         ConstraintsWidget constraints -> [ LambdaTypes.viewConstraints constraints ]
 
-initTerm : Lambda.Term -> Int -> Widget
+
+-- This ugly stuff may be used in the future for FRP-kind stuff
+-- Or maybe I'll delete it, idk
 initTerm term id =
-    { id = id
-    , inner = TermWidget term
-    }
+    Widget id <| TermWidget term
 
 initTree tree id =
     Widget id <| TreeWidget tree
+
+initConstraints constraints id =
+    Widget id <| ConstraintsWidget constraints
 
 viewControls : Widget -> List (Html Msg)
 viewControls =

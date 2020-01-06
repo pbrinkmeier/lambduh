@@ -36,7 +36,7 @@ update msg model =
             addWidget (Widget.initTree <| LambdaTypes.generateTree term) model
 
         AddConstraintsWidget tree _ ->
-            Debug.todo "Not implemented"
+            addWidget (Widget.initConstraints <| LambdaTypes.extractConstraints tree) model
 
 addWidget initialize model =
     { model

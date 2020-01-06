@@ -7,7 +7,7 @@ module LambdaTypes exposing
     , viewConstraints
     )
 
-import Html exposing (Html, div, span, text)
+import Html exposing (Html, div, span, text, table, tr, td)
 import Html.Attributes exposing (class)
 import Lambda
 
@@ -20,7 +20,8 @@ type alias Tree =
 
 type TreeNode
     = VarNode String Type
-    | AbsNode String Tree
+    -- Contains the parameters name and it's type in the new context (redundantly stored in the Tree)
+    | AbsNode String Type Tree
     | AppNode Tree Tree
 
 type alias TypeContext = List (String, Type)
@@ -100,10 +101,12 @@ generateTree =
                 Lambda.Abs param body ->
                     let
                         -- Insert a new entry for "param" into the context
-                        newCtx = ctx ++ [(param, NumberedTypeVariable nextVarId)]
+                        paramType = NumberedTypeVariable nextVarId
+                        newCtx = ctx ++ [(param, paramType)]
                         (bodyTree, restVar) = generateTreeN newCtx (nextVarId + 1) (nextVarId + 2) body
                     in
-                        (makeTree <| AbsNode param bodyTree, restVar)
+                        -- Cache the parameters type in the node for easier retrieval
+                        (makeTree <| AbsNode param paramType bodyTree, restVar)
                 Lambda.App f x ->
                     let
                         (fTree, sndNextVarId) = generateTreeN ctx nextVarId (nextVarId + 2) f
@@ -141,7 +144,7 @@ viewTree { context, term, termType, inner } =
                               , viewType lookupResult
                               ]
                             ]
-                AbsNode _ body ->
+                AbsNode _ _ body ->
                     [ viewTree body ]
                 AppNode lhs rhs ->
                     [ viewTree lhs, viewTree rhs ]
@@ -163,7 +166,7 @@ viewTree { context, term, termType, inner } =
 ruleName node =
     case node of
         VarNode _ _ -> "Var"
-        AbsNode _ _ -> "Abs"
+        AbsNode _ _ _ -> "Abs"
         AppNode _ _ -> "App"
 
 ---- constraints stuff ----
@@ -176,7 +179,39 @@ type alias Constraint =
     }
 
 extractConstraints : Tree -> Constraints
-extractConstraints _ = Debug.todo "Nothing here :("
+extractConstraints { termType, inner } =
+    case inner of
+        VarNode _ typeInContext ->
+            [ Constraint typeInContext termType ]
+        AbsNode param paramType body ->
+            [ Constraint termType <| FunctionType paramType body.termType ] ++ extractConstraints body
+        AppNode fTree xTree ->
+            [ Constraint fTree.termType <| FunctionType xTree.termType termType ] ++ extractConstraints fTree ++ extractConstraints xTree
 
 viewConstraints : Constraints -> Html a
-viewConstraints _ = Debug.todo "I N V I S I B L E"
+viewConstraints constraints =
+    let
+        viewConstraintCells { lhs, rhs } =
+            [ td [ class "cr -lhs" ] [ viewType lhs ]
+            , td [ class "cr -eq" ] [ text "=" ]
+            , td [ class "cr -rhs" ] [ viewType rhs ]
+            ]
+
+        viewConstraint leadingSymbol constraint =
+            tr [ class "constraint " ] <|
+            [ td [ class "cr -begin" ] [ text leadingSymbol ] ] ++ viewConstraintCells constraint
+
+        lastRow =
+            tr [ class "constraint" ]
+                [ td [ class "cr -begin" ] [ text "}" ]
+                , td [ class "cr -lhs" ] []
+                , td [ class "cr -eq" ] []
+                , td [ class "cr -rhs" ] []
+                ]
+    in
+        case constraints of
+            -- Shouldn't be possible (it is of course if someone were to use this function manually)
+            [] -> Debug.todo "You should not have done that!"
+            (first :: rest) ->
+                table [ class "constraints" ] <|
+                    [ viewConstraint "{" first ] ++ (List.map (viewConstraint ",") rest) ++ [ lastRow ]

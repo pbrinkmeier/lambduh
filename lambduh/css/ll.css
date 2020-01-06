@@ -52,7 +52,7 @@
 }
 
 .ll-widget {
-    margin-top: 1em;
+    margin: 1em 0;
     padding: .25em;
     background-color: var(--widget-bg);
 }
