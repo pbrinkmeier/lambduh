@@ -12,6 +12,10 @@
             --mb: #2c3e50;
         }
 
+        button {
+            font-family: inherit;
+        }
+
         body {
             margin: 0;
             font-family: 'Fira Sans';
@@ -87,7 +91,34 @@
 
         .widget-content {
             padding: .5em;
+            display: flex;
+        }
+
+        .widget-content-column {
+            flex: 1;
             text-align: center;
+        }
+
+        .widget-content-column-title {
+            font-size: .8em;
+            color: #7f8c8d;
+        }
+
+        .widget-buttons {
+            padding: .1em;
+            font-size: .8em;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        .widget-button:not(:first-child) {
+            margin-left: .25em;
+        }
+
+        .widget-button.-text {
+            display: flex;
+            align-items: center;
         }
 
         .widget-controls {
@@ -101,8 +132,11 @@
 
         .cr.-lhs,
         .cr.-rhs {
-            text-align: left;
             padding: 0 .2em;
+        }
+
+        .unifier {
+            margin: 0 auto;
         }
 
         /* rules */
@@ -164,6 +198,12 @@
             line-height: 0.8em;
         }
 
+        .substitution.-new > .substitution-lhs,
+        .substitution.-new > .substitution-arrow,
+        .substitution.-new > .substitution-rhs {
+            color: #c0392b;
+        }
+
         </style>
     </head>
     <body>
@@ -184,7 +224,9 @@
                     <div class="ll-widget term">
                         <div class="widget-title"><span class="widget-id">01</span> :: Term</div>
                         <div class="widget-content term-display">
-                            <span class="id">f</span> <span class="id">x</span>
+                            <div class="widget-content-column">
+                                <span class="id">f</span> <span class="id">x</span>
+                            </div>
                         </div>
                         <div class="widget-controls">
                             <button>+ eval</button>
@@ -194,35 +236,37 @@
                     <div class="ll-widget tree">
                         <div class="widget-title"><span class="widget-id">02</span> :: Tree of <span class="widget-dep">01</span></div>
                         <div class="widget-content tree-display">
-                            <div class="rule">
-                                <div class="rule-contents">
-                                <div class="rule-reqs">
-                                    <div class="rule-req">
-                                        <div class="rule">
-                                            <div class="rule-contents">
-                                                <div class="rule-reqs">
-                                                    <div class="rule-req">&Gamma;(<span class="id">f</span>) = <span class="type -var">&beta;</span></div>
+                            <div class="widget-content-column">
+                                <div class="rule">
+                                    <div class="rule-contents">
+                                    <div class="rule-reqs">
+                                        <div class="rule-req">
+                                            <div class="rule">
+                                                <div class="rule-contents">
+                                                    <div class="rule-reqs">
+                                                        <div class="rule-req">&Gamma;(<span class="id">f</span>) = <span class="type -var">&beta;</span></div>
+                                                    </div>
+                                                    <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> : <span class="type -var">&alpha;<span class="type-var-num">2</span></span></div>
                                                 </div>
-                                                <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> : <span class="type -var">&alpha;<span class="type-var-num">2</span></span></div>
+                                                <div class="rule-name">Var</div>
                                             </div>
-                                            <div class="rule-name">Var</div>
+                                        </div>
+                                        <div class="rule-req">
+                                            <div class="rule">
+                                                <div class="rule-contents">
+                                                    <div class="rule-reqs">
+                                                        <div class="rule-req">&Gamma;(<span class="id">x</span>) = <span class="type -var">&gamma;</span></div>
+                                                    </div>
+                                                    <div class="rule-conc">&Gamma; ⊢ <span class="id">x</span> : <span class="type -var">&alpha;<span class="type-var-num">3</span></span></div>
+                                                </div>
+                                                <div class="rule-name">Var</div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="rule-req">
-                                        <div class="rule">
-                                            <div class="rule-contents">
-                                                <div class="rule-reqs">
-                                                    <div class="rule-req">&Gamma;(<span class="id">x</span>) = <span class="type -var">&gamma;</span></div>
-                                                </div>
-                                                <div class="rule-conc">&Gamma; ⊢ <span class="id">x</span> : <span class="type -var">&alpha;<span class="type-var-num">3</span></span></div>
-                                            </div>
-                                            <div class="rule-name">Var</div>
-                                        </div>
+                                    <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> <span class="id">x</span> : <span class="type -var" >&alpha;<span class="type-var-num">1</span></span></div>
                                     </div>
+                                    <div class="rule-name">App</div>
                                 </div>
-                                <div class="rule-conc">&Gamma; ⊢ <span class="id">f</span> <span class="id">x</span> : <span class="type -var" >&alpha;<span class="type-var-num">1</span></span></div>
-                                </div>
-                                <div class="rule-name">App</div>
                             </div>
                         </div>
                         <div class="widget-controls">
@@ -232,35 +276,93 @@
                     <div class="ll-widget">
                         <div class="widget-title"><span class="widget-id">03</span> :: Constraints of <span class="widget-dep">02</span></div>
                         <div class="widget-content">
-                            <table class="constraints">
-                                <tr class="constraint">
-                                    <td class="cr -begin">{</td>
-                                    <td class="cr -lhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></td>
-                                    <td class="cr -eq">=</td>
-                                    <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span> &rarr; <span class="type -var">&alpha;<span class="type-var-num">1</span></td>
-                                </tr>
-                                <tr class="constraint">
-                                    <td class="cr -begin">,</td>
-                                    <td class="cr -lhs"><span class="type -var">&beta;</span></td>
-                                    <td class="cr -eq">=</td>
-                                    <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></span></td>
-                                </tr>
-                                <tr class="constraint">
-                                    <td class="cr -begin">,</td>
-                                    <td class="cr -lhs"><span class="type -var">&gamma;</span></td>
-                                    <td class="cr -eq">=</td>
-                                    <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span></span></td>
-                                </tr>
-                                <tr class="constraint">
-                                    <td class="cr -begin">}</td>
-                                    <td class="cr -lhs"></td>
-                                    <td class="cr -eq"></td>
-                                    <td class="cr -rhs"></td>
-                                </tr>
-                            </table>
+                            <div class="widget-content-column">
+                                <table class="constraints">
+                                    <tr class="constraint">
+                                        <td class="cr -begin">{</td>
+                                        <td class="cr -lhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></td>
+                                        <td class="cr -eq">=</td>
+                                        <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span> &rarr; <span class="type -var">&alpha;<span class="type-var-num">1</span></td>
+                                    </tr>
+                                    <tr class="constraint">
+                                        <td class="cr -begin">,</td>
+                                        <td class="cr -lhs"><span class="type -var">&beta;</span></td>
+                                        <td class="cr -eq">=</td>
+                                        <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></span></td>
+                                    </tr>
+                                    <tr class="constraint">
+                                        <td class="cr -begin">,</td>
+                                        <td class="cr -lhs"><span class="type -var">&gamma;</span></td>
+                                        <td class="cr -eq">=</td>
+                                        <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span></span></td>
+                                    </tr>
+                                    <tr class="constraint">
+                                        <td class="cr -begin">}</td>
+                                        <td class="cr -lhs"></td>
+                                        <td class="cr -eq"></td>
+                                        <td class="cr -rhs"></td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                         <div class="widget-controls">
                             <button>+ mgu</button>
+                        </div>
+                    </div>
+                    <div class="ll-widget">
+                        <div class="widget-title"><span class="widget-id">04</span> :: Unification of <span class="widget-dep">03</span></div>
+                        <div class="widget-buttons">
+                            <button class="widget-button -button">←</button>
+                            <div class="widget-button -text">1/4</div>
+                            <button class="widget-button -button">→</button>
+                        </div>
+                        <div class="widget-content">
+                            <div class="widget-content-column">
+                                <div class="widget-content-column-title">Constraints</div>
+                                <table class="constraints">
+                                    <tr class="constraint">
+                                        <td class="cr -begin">{</td>
+                                        <td class="cr -lhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></td>
+                                        <td class="cr -eq">=</td>
+                                        <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span> &rarr; <span class="type -var">&alpha;<span class="type-var-num">1</span></td>
+                                    </tr>
+                                    <tr class="constraint">
+                                        <td class="cr -begin">,</td>
+                                        <td class="cr -lhs"><span class="type -var">&beta;</span></td>
+                                        <td class="cr -eq">=</td>
+                                        <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></span></td>
+                                    </tr>
+                                    <tr class="constraint">
+                                        <td class="cr -begin">,</td>
+                                        <td class="cr -lhs"><span class="type -var">&gamma;</span></td>
+                                        <td class="cr -eq">=</td>
+                                        <td class="cr -rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span></span></td>
+                                    </tr>
+                                    <tr class="constraint">
+                                        <td class="cr -begin">}</td>
+                                        <td class="cr -lhs"></td>
+                                        <td class="cr -eq"></td>
+                                        <td class="cr -rhs"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="widget-content-column">
+                                <div class="widget-content-column-title">Unifier</div>
+                                <table class="unifier">
+                                    <tr class="substitution -new">
+                                        <td class="substitution-begin">[</td>
+                                        <td class="substitution-lhs"><span class="type -var">&alpha;<span class="type-var-num">2</span></td>
+                                        <td class="substitution-arrow">⇨</td>
+                                        <td class="substitution-rhs"><span class="type -var">&alpha;<span class="type-var-num">3</span> &rarr; <span class="type -var">&alpha;<span class="type-var-num">1</span></td>
+                                    </tr>
+                                    <tr class="substitution">
+                                        <td class="substitution-begin">]</td>
+                                        <td class="substitution-lhs"></td>
+                                        <td class="substitution-eq"></td>
+                                        <td class="substitution-rhs"></td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
