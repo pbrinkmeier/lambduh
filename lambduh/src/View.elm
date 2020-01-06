@@ -31,7 +31,7 @@ viewWidgets model =
                 , div [ class "ll-widget-content" ]
                     [ div [ class "ll-widget-content-wrapper" ] <| Widget.viewContent widget
                     ]
-                , div [ class "ll-widget-controls" ] <| Widget.viewControls widget
+                , div [ class "ll-widget-actions" ] <| Widget.viewControls widget
                 ]
     in
     List.map viewWidget <| Dict.values model.widgets

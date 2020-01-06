@@ -101,8 +101,8 @@ viewControls : Widget -> List (Html Msg)
 viewControls =
     let
         viewControl (label, msg) =
-            div [ class "ll-widget-control" ]
-                [ button [ class "ll-widget-control-button", onClick msg ] [ text label ]
+            div [ class "ll-widget-action" ]
+                [ button [ class "ll-widget-action-button", onClick msg ] [ text label ]
                 ]
     in
     List.map viewControl << possibleActions

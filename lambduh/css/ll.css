@@ -96,10 +96,12 @@
     margin: auto;
 }
 
-.ll-widget-controls {
+.ll-widget-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: .25em;
 }
 
-.ll-widget-control {
-    margin-top: .25em;
-    text-align: right;
+.ll-widget-action {
+    margin-left: .25em;
 }
