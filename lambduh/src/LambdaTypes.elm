@@ -25,7 +25,7 @@ type alias Tree =
 
 type TreeNode
     = VarNode String Type
-    -- Contains the parameters name and it's type in the new context (redundantly stored in the Tree)
+    -- Contains the parameters name and its type in the new context (redundantly stored in the Tree)
     | AbsNode String Type Tree
     | AppNode Tree Tree
 
@@ -109,6 +109,7 @@ generateTree =
             in
             case term of
                 Lambda.Var varName ->
+                    -- TODO: create type schema
                     let
                         t =
                             case ctxLookup varName ctx of
@@ -133,6 +134,8 @@ generateTree =
                         (xTree, restVarId) = generateTreeN ctx (nextVarId + 1) sndNextVarId x
                     in
                         (makeTree <| AppNode fTree xTree, restVarId)
+                Lambda.Let _ _ _ ->
+                    Debug.todo "Not implemented!"
     in
         Tuple.first << generateTreeN [] 1 2
 

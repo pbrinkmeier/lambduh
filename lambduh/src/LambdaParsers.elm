@@ -15,12 +15,13 @@ term =
         -- "terminal" includes anything but function application
         -- function application needs to be handled with care because of its
         -- left-associativity
-        -- TODO: add let and const terms
+        -- TODO: add const terms
         terminal =
             P.oneOf
                 [ abs
                 , var
                 , parenthesized
+                , letTerm
                 ]
 
         -- abstraction terms start with a backslash or a lambda, followed by
@@ -43,6 +44,20 @@ term =
                 |= P.lazy (\_ -> term)
                 |. P.symbol ")"
 
+        letTerm =
+            P.succeed Lambda.Let
+                |. P.keyword "let"
+                |. P.symbol " "
+                |= identifier
+                |. P.symbol " "
+                |. P.symbol "="
+                |. P.symbol " "
+                |= P.lazy (\_ -> term)
+                |. P.symbol " "
+                |. P.keyword "in"
+                |. P.symbol " "
+                |= P.lazy (\_ -> term)
+
         -- parses a trailing function application
         -- if the source doesn't start with a space, return the term
         -- otherwise consume the space and *the next terminal*
@@ -53,7 +68,11 @@ term =
         rest t =
             P.oneOf
                 [ P.succeed (Lambda.App t)
-                    |. P.symbol " "
+                    -- even if the space was consumed, we can still try the next case
+                    -- (if no terminal could be parsed)
+                    -- this is the case for e.g. let x = y in x
+                    -- in is a keyword ~> it can't be a variable
+                    |. P.backtrackable (P.symbol " ")
                     |= terminal
                     |> P.andThen rest
                 , P.succeed t
@@ -65,8 +84,7 @@ term =
             P.variable
                 { start = Char.isLower
                 , inner = Char.isAlphaNum
-                -- TODO: add let and in
-                , reserved = Set.empty
+                , reserved = Set.fromList [ "let", "in" ]
                 }
     in
         terminal |> P.andThen rest

@@ -7,6 +7,7 @@ type Term
     = Var String
     | Abs String Term
     | App Term Term
+    | Let String Term Term
 
 viewTerm : Term -> Html a
 viewTerm =
@@ -26,6 +27,7 @@ viewTerm =
                         lhs =
                             case f of
                                 Abs _ _ -> parenthesize <| viewTermList f
+                                Let _ _ _ -> parenthesize <| viewTermList f
                                 _       -> viewTermList f
                         rhs =
                             case x of
@@ -34,12 +36,14 @@ viewTerm =
                                 -- e.g. necessary: (g (\x.x)) f = g (\x.x) f
                                 -- not necessary: g \x.x 
                                 Abs _ _ -> parenthesize <| viewTermList x
+                                Let _ _ _ -> parenthesize <| viewTermList x
                                 _ ->       viewTermList x
                         
                         parenthesize h =
                             [ text "(" ] ++ h ++ [ text ")" ]
                     in
                         lhs ++ [ text " " ] ++ rhs
-                    
+                Let name value inTerm ->
+                    [ text "let ", span [ class "lambda-id" ] [ text name ], text " = " ] ++ viewTermList value ++ [ text " in " ] ++ viewTermList inTerm
     in
     span [ class "lambda" ] << viewTermList
