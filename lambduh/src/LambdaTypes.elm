@@ -7,68 +7,100 @@ import Lambda
 type alias Tree =
     { context : TypeContext
     , term : Lambda.Term
-    , typeId : Int
+    , termType : Type
     , inner : TreeNode
     }
 
 type TreeNode
-    = VarNode String Int
+    = VarNode String Type
     | AbsNode String Tree
     | AppNode Tree Tree
 
-type alias TypeContext = List (String, Int)
+type alias TypeContext = List (String, Type)
 
-ctxLookup k =
-    List.foldl (\(ck, i) acc -> if k == ck then Just i else acc) Nothing
+-- Types can be of different forms
+type Type
+    -- Numbered type variables are generated in type trees
+    -- They are displayed as `\alpha_{i}`
+    = NumberedTypeVariable Int
+    -- Named variables are used to denote variables that belong to free variables in a term
+    -- They are displayed as `\tau_{x}`, read: "Type of `x`"
+    | NamedTypeVariable String
+    -- TODO: const
+
+viewType t =
+    case t of
+        NumberedTypeVariable i ->
+            span [ class "type-var" ]
+                [ text "α"
+                , span [ class "type-var-id" ] [ text <| String.fromInt i ]
+                ]
+        NamedTypeVariable name ->
+            span [ class "type-var" ]
+                [ text "τ"
+                , span [ class "type-var-id" ] [ text name ]
+                ]
+
+-- Look for the rightmost appearance of identifier "needle" and return its type
+ctxLookup needle =
+    let
+        folder (varName, varType) acc =
+            if varName == needle then
+                Just varType
+            else
+                acc
+    in
+    List.foldl folder Nothing
 
 generateTree =
     let
-        -- n: the variable this term is supposed to be assigned
-        -- m: the variable to start indexing subtrees off
+        -- currVarId: the variable number this term is supposed to be assigned
+        -- nextVarId: the variable number to start indexing subtrees off
         -- this crime against humanity is needed to achieve "natural" numbering in App
         -- **m is not necessarily n + 1**
         -- returns next available variable in tuple (also for App, this is horrible)
         generateTreeN : TypeContext -> Int -> Int -> Lambda.Term -> (Tree, Int)
-        generateTreeN ctx n m term =
+        generateTreeN ctx currVarId nextVarId term =
+            let
+                currVar = NumberedTypeVariable currVarId
+                makeTree = Tree ctx term currVar
+            in
             case term of
                 Lambda.Var varName ->
                     let
-                        (id, l) =
+                        t =
                             case ctxLookup varName ctx of
-                                Nothing -> (m, m + 1)
-                                Just x -> (x, m)
+                                -- If the variable is free, give it a named type variable
+                                Nothing -> NamedTypeVariable varName
+                                -- Otherwise, use the one in the given context
+                                Just x  -> x
                     in
-                    (Tree ctx term n <| VarNode varName id, l)
+                    (makeTree <| VarNode varName t, nextVarId)
                 Lambda.Abs param body ->
                     let
-                        -- todo: insert type
-                        (bodyTree, l) = generateTreeN (ctx ++ [(param, m)]) (m + 1) (m + 2) body
+                        -- Insert a new entry for "param" into the context
+                        newCtx = ctx ++ [(param, NumberedTypeVariable nextVarId)]
+                        (bodyTree, restVar) = generateTreeN newCtx (nextVarId + 1) (nextVarId + 2) body
                     in
-                        (Tree ctx term n <| AbsNode param bodyTree, l)
+                        (makeTree <| AbsNode param bodyTree, restVar)
                 Lambda.App f x ->
                     let
-                        (fTree, l) = generateTreeN ctx m (m + 2) f
-                        (xTree, k) = generateTreeN ctx (m + 1) l x
+                        (fTree, sndNextVarId) = generateTreeN ctx nextVarId (nextVarId + 2) f
+                        (xTree, restVarId) = generateTreeN ctx (nextVarId + 1) sndNextVarId x
                     in
-                        (Tree ctx term n <| AppNode fTree xTree, k)
+                        (makeTree <| AppNode fTree xTree, restVarId)
     in
         Tuple.first << generateTreeN [] 1 2
 
 viewTree : Tree -> Html a
-viewTree { context, term, typeId, inner } =
+viewTree { context, term, termType, inner } =
     let
-        stupidViewType id =
-            span [ class "type-var" ]
-                [ text "α"
-                , span [ class "type-var-id" ] [ text <| String.fromInt id ]
-                ]
-
         viewContext =
             let
                 viewAss (var, t) =
                     [ span [ class "lambda-id" ] [ text var ]
                     , text " : "
-                    , stupidViewType t
+                    , viewType t
                     ]
             in
             List.concat << List.intersperse ([text ", "]) << List.map viewAss
@@ -85,7 +117,7 @@ viewTree { context, term, typeId, inner } =
                             , [ text ")("
                               , span [ class "lambda-id" ] [ text varName ]
                               , text ") = "
-                              , stupidViewType lookupResult
+                              , viewType lookupResult
                               ]
                             ]
                 AbsNode _ body ->
@@ -101,7 +133,7 @@ viewTree { context, term, typeId, inner } =
                     , text " ⊢ "
                     , Lambda.viewTerm term
                     , text " : "
-                    , stupidViewType typeId
+                    , viewType termType
                     ]
                 ]
             , div [ class "rule-name" ] [ text <| ruleName inner ]
