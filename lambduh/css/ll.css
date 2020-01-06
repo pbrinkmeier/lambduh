@@ -84,11 +84,20 @@
 .ll-widget-content {
     display: flex;
     margin-top: .2em;
+}
+
+.ll-widget-content-column {
+    display: flex;
+    flex: 1;
     overflow-x: scroll;
 
     /* literally no browser compat except for FF */
     scrollbar-color: rgba(0, 0, 0, 0.3) var(--widget-bg);
     scrollbar-width: thin;
+}
+
+.ll-widget-content-column:not(:first-child) {
+    margin-left: .5em;
 }
 
 /* center content without breaking on overflow */
@@ -104,4 +113,14 @@
 
 .ll-widget-action {
     margin-left: .25em;
+}
+
+/*
+ * constraints and substitutions tables
+ * mostly layed out by tables (similar to LaTeX)
+ */
+.substitution.-new > .substitution-lhs,
+.substitution.-new > .substitution-arrow,
+.substitution.-new > .substitution-rhs {
+    color: var(--new-substitution-color);
 }

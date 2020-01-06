@@ -1,11 +1,15 @@
 module Unification exposing
     ( History
     , unifyStepByStep
+    , viewHistoryEntry
     )
 
-import LambdaTypes exposing (Constraint, Type(..), TypeVariable)
+import Dict exposing (Dict)
+import LambdaTypes exposing (Constraint, Type(..), TypeVariable, viewConstraints, viewType)
+import Html exposing (Html, table, tr, td, text)
+import Html.Attributes exposing (class, classList)
 
-type alias History = List HistoryEntry
+type alias History = Dict Int HistoryEntry
 
 type alias HistoryEntry =
     -- This is an kinda okay type because
@@ -24,7 +28,7 @@ type alias Substitution =
 unifyStepByStep : List Constraint -> History
 unifyStepByStep =
     let
-        unifyStepByStepAcc : List Substitution -> List Constraint -> History
+        unifyStepByStepAcc : List Substitution -> List Constraint -> List HistoryEntry
         unifyStepByStepAcc subs constraints =
             case constraints of
                 [] ->
@@ -44,7 +48,7 @@ unifyStepByStep =
                 Just x -> [x]
                 Nothing -> []
     in
-        unifyStepByStepAcc []
+        Dict.fromList << List.indexedMap Tuple.pair << unifyStepByStepAcc []
         
 
 unifyStep : List Constraint -> Result (Type, Type) (List Constraint, Maybe Substitution)
@@ -117,3 +121,36 @@ unifyStep constraints =
     case constraints of
         [] -> Ok ([], Nothing)
         ({ lhs, rhs } :: rest) -> unifyLeftRightRest lhs rhs rest
+
+viewHistoryEntry : HistoryEntry -> List (Html a)
+viewHistoryEntry { constraints, newSubstitution, substitutions } =
+    let
+        viewSubstitutions =
+            case (newSubstitution, substitutions) of
+                (Just first, rest) ->
+                    [ viewSubstitution "[" True first ] ++ List.map (viewSubstitution "," False) rest ++ [ emptyRow "]" ]
+                (Nothing, first :: rest) ->
+                    [ viewSubstitution "[" False first ] ++ List.map (viewSubstitution "," False) rest ++ [ emptyRow "]" ]
+                (Nothing, []) ->
+                    -- shouldn't ever need to be display, first constraint is never "func = func"
+                    [ emptyRow "[" ] ++ [ emptyRow "]" ]
+         
+        viewSubstitution symbol isNew { replace, by } =
+            tr [ classList [ ("substitution", True), ("-new", isNew) ] ]
+                [ td [ class "substitution-lead" ] [ text symbol ]
+                , td [ class "substitution-lhs" ] [ viewType <| TypeVar replace ]
+                , td [ class "substitution-arrow" ] [ text "⇨" ]
+                , td [ class "substitution-rhs" ] [ viewType by ]
+                ]
+        
+        emptyRow symbol =
+            tr [ class "substitution" ]
+                [ td [ class "substitution-lead" ] [ text symbol ]
+                , td [ class "substitution-lhs" ] []
+                , td [ class "substitution-arrow" ] []
+                , td [ class "substitution-rhs" ] []
+                ]
+    in
+        [ viewConstraints constraints
+        , table [ class "substitutions" ] viewSubstitutions
+        ]

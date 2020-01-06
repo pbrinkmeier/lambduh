@@ -9,6 +9,7 @@ module Widget exposing
     , viewControls
     )
 
+import Dict
 import Html exposing (Html, span, text, div, button, pre)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
@@ -77,11 +78,23 @@ zeroPad i str =
 
 viewContent : Widget -> List (Html a)
 viewContent widget =
-    case widget.inner of
-        TermWidget term -> [ Lambda.viewTerm term ]
-        TreeWidget tree -> [ LambdaTypes.viewTree tree ]
-        ConstraintsWidget constraints -> [ LambdaTypes.viewConstraints constraints ]
-        UnificationWidget _ h -> [ pre [] [ text <| Debug.toString h ] ]
+    let
+        columnContents =
+            case widget.inner of
+                TermWidget term -> [ Lambda.viewTerm term ]
+                TreeWidget tree -> [ LambdaTypes.viewTree tree ]
+                ConstraintsWidget constraints -> [ LambdaTypes.viewConstraints constraints ]
+                UnificationWidget current history ->
+                    case Dict.get current history of
+                        Nothing -> [ text "Nothing here :(" ]
+                        Just historyEntry -> Unification.viewHistoryEntry historyEntry
+
+        viewColumn element =
+            div [ class "ll-widget-content-column" ]
+                [ div [ class "ll-widget-content-wrapper" ] [ element ]
+                ]
+    in
+        List.map viewColumn columnContents
 
 -- This ugly stuff may be used in the future for FRP-kind stuff
 -- Or maybe I'll delete it, idk

@@ -28,9 +28,7 @@ viewWidgets model =
         viewWidget widget =
             div [ class "ll-widget" ]
                 [ div [ class "ll-widget-title" ] <| Widget.viewTitle widget
-                , div [ class "ll-widget-content" ]
-                    [ div [ class "ll-widget-content-wrapper" ] <| Widget.viewContent widget
-                    ]
+                , div [ class "ll-widget-content" ] <| Widget.viewContent widget
                 , div [ class "ll-widget-actions" ] <| Widget.viewControls widget
                 ]
     in

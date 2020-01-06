@@ -9,6 +9,7 @@ module LambdaTypes exposing
     , Constraint
     , extractConstraints
     , viewConstraints
+    , viewType
     )
 
 import Html exposing (Html, div, span, text, table, tr, td)
