@@ -211,27 +211,24 @@ extractConstraints { termType, inner } =
 viewConstraints : Constraints -> Html a
 viewConstraints constraints =
     let
-        viewConstraintCells { lhs, rhs } =
-            [ td [ class "cr -lhs" ] [ viewType lhs ]
-            , td [ class "cr -eq" ] [ text "=" ]
-            , td [ class "cr -rhs" ] [ viewType rhs ]
-            ]
+        viewConstraint leadingSymbol { lhs, rhs } =
+            tr [ class "constraint " ]
+                [ td [ class "constraint-lead" ] [ text leadingSymbol ]
+                , td [ class "constraint-lhs" ] [ viewType lhs ]
+                , td [ class "constraint-eq" ] [ text "=" ]
+                , td [ class "constraint-rhs" ] [ viewType rhs ]
+                ]
 
-        viewConstraint leadingSymbol constraint =
-            tr [ class "constraint " ] <|
-            [ td [ class "cr -begin" ] [ text leadingSymbol ] ] ++ viewConstraintCells constraint
-
-        lastRow =
+        emptyRow symbol =
             tr [ class "constraint" ]
-                [ td [ class "cr -begin" ] [ text "}" ]
-                , td [ class "cr -lhs" ] []
-                , td [ class "cr -eq" ] []
-                , td [ class "cr -rhs" ] []
+                [ td [ class "constraint-lead" ] [ text symbol ]
+                , td [ class "constraint-lhs" ] []
+                , td [ class "constraint-eq" ] []
+                , td [ class "constraint-rhs" ] []
                 ]
     in
         case constraints of
-            -- Shouldn't be possible (it is of course if someone were to use this function manually)
-            [] -> Debug.todo "You should not have done that!"
+            [] -> table [ class "constraints" ] [ emptyRow "{", emptyRow "}" ]
             (first :: rest) ->
                 table [ class "constraints" ] <|
-                    [ viewConstraint "{" first ] ++ (List.map (viewConstraint ",") rest) ++ [ lastRow ]
+                    [ viewConstraint "{" first ] ++ (List.map (viewConstraint ",") rest) ++ [ emptyRow "}" ]

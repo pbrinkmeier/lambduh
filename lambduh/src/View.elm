@@ -26,10 +26,18 @@ view model =
 viewWidgets model =
     let
         viewWidget widget =
-            div [ class "ll-widget" ]
-                [ div [ class "ll-widget-title" ] <| Widget.viewTitle widget
-                , div [ class "ll-widget-content" ] <| Widget.viewContent widget
-                , div [ class "ll-widget-actions" ] <| Widget.viewControls widget
+            div [ class "ll-widget" ] <| concatMaybes
+                [ Just <| div [ class "ll-widget-title" ] (Widget.viewTitle widget)
+                , div [ class "ll-widget-controls" ] |> notEmpty (Widget.viewControls widget)
+                , Just <| div [ class "ll-widget-content" ] (Widget.viewContent widget)
+                , div [ class "ll-widget-actions" ] |> notEmpty (Widget.viewActions widget)
                 ]
+         
+        notEmpty list f =
+            case list of
+                [] -> Nothing
+                _ -> Just <| f list
+
+        concatMaybes = List.filterMap (\x -> x)
     in
     List.map viewWidget <| Dict.values model.widgets

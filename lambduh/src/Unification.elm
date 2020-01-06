@@ -41,7 +41,7 @@ unifyStepByStep =
                         -- TODO: should be handled by generating an "error" historyentry that shows the message
                         (remainingConstraints, newSubst) = Maybe.withDefault ([], Nothing) <| Result.toMaybe <| unifyStep constraints
                     in
-                        [ HistoryEntry constraints newSubst subs ] ++ unifyStepByStepAcc (subs ++ maybeToList newSubst) remainingConstraints
+                        [ HistoryEntry constraints newSubst subs ] ++ unifyStepByStepAcc (maybeToList newSubst ++ subs) remainingConstraints
 
         maybeToList m =
             case m of

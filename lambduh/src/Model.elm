@@ -1,7 +1,7 @@
 module Model exposing (Model, initialModel, update)
 
 import Dict exposing (Dict)
-import Widget exposing (Widget)
+import Widget exposing (Widget, setStepInUnificationWidget)
 import Parser
 import LambdaParsers
 import Msg exposing (Msg(..))
@@ -41,6 +41,9 @@ update msg model =
 
         AddUnificationWidget constraints _ ->
             addWidget (Widget.initUnification <| Unification.unifyStepByStep constraints) model
+
+        SetStep step widgetId ->
+            { model | widgets = Dict.update widgetId (Maybe.map <| setStepInUnificationWidget step) model.widgets }
 
 addWidget initialize model =
     { model

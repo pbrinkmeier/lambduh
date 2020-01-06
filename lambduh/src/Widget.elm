@@ -7,11 +7,13 @@ module Widget exposing
     , initConstraints
     , initUnification
     , viewControls
+    , viewActions
+    , setStepInUnificationWidget
     )
 
 import Dict
 import Html exposing (Html, span, text, div, button, pre)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, disabled)
 import Html.Events exposing (onClick)
 import Lambda
 import LambdaTypes
@@ -57,6 +59,31 @@ possibleActions widget =
                     ]
     in
     List.map (\(l, f) -> (l, f widget.id)) pas
+
+controls : Widget -> List (Html Msg)
+controls widget =
+    let
+        buttonControl enabled label msg =
+            button [ class "ll-widget-control-button", disabled <| not enabled, onClick msg ] [ text label ]
+
+        hasKey key dict =
+            case Dict.get key dict of
+                Nothing -> False
+                Just _ -> True
+    in
+        case widget.inner of
+            UnificationWidget i history ->
+                [ buttonControl (hasKey (i - 1) history) "←" (SetStep (i - 1) widget.id)
+                , buttonControl (hasKey (i + 1) history) "→" (SetStep (i + 1) widget.id)
+                ]
+            _ ->
+                []
+
+setStepInUnificationWidget step widget =
+    case widget.inner of
+        UnificationWidget _ history ->
+            { widget | inner = UnificationWidget step history }
+        _ -> widget
 
 viewTitle : Widget -> List (Html Msg)
 viewTitle widget =
@@ -111,11 +138,14 @@ initUnification history id =
     Widget id <| UnificationWidget 0 history
 
 viewControls : Widget -> List (Html Msg)
-viewControls =
+viewControls = controls
+
+viewActions : Widget -> List (Html Msg)
+viewActions =
     let
-        viewControl (label, msg) =
+        viewAction (label, msg) =
             div [ class "ll-widget-action" ]
                 [ button [ class "ll-widget-action-button", onClick msg ] [ text label ]
                 ]
     in
-    List.map viewControl << possibleActions
+    List.map viewAction << possibleActions

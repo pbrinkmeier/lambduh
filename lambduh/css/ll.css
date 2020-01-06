@@ -105,6 +105,15 @@
     margin: auto;
 }
 
+.ll-widget-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.ll-widget-control:not(:first-child) {
+    margin-left: .25em;
+}
+
 .ll-widget-actions {
     display: flex;
     justify-content: flex-end;

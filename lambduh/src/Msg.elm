@@ -11,3 +11,4 @@ type Msg
     | AddTreeWidget Lambda.Term Int
     | AddConstraintsWidget LambdaTypes.Tree Int
     | AddUnificationWidget LambdaTypes.Constraints Int
+    | SetStep Int Int
