@@ -3,7 +3,7 @@ module Unification exposing
     , unifyStepByStep
     )
 
-import LambdaTypes exposing (Constraint, Type)
+import LambdaTypes exposing (Constraint, Type, TypeVariable)
 
 type alias History = List HistoryEntry
 
@@ -16,7 +16,7 @@ type alias HistoryEntry =
 type alias Substitution =
     -- TODO: only variables should be on the left side
     -- TODO: split LambdaTypes.Type
-    { replace : Type
+    { replace : TypeVariable
     , by : Type
     }
 

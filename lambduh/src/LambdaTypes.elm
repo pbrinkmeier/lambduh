@@ -1,6 +1,7 @@
 module LambdaTypes exposing
     ( Tree
     , Type
+    , TypeVariable
     , generateTree
     , viewTree
     , Constraints
@@ -28,30 +29,35 @@ type TreeNode
 
 type alias TypeContext = List (String, Type)
 
--- Types can be of different forms
+-- Types can be either variables, concrete types (e.g. int) or functions
 type Type
+    = TypeVar TypeVariable
+    | FunctionType Type Type
+    -- | ConcreteType String
+
+type TypeVariable
     -- Numbered type variables are generated in type trees
     -- They are displayed as `\alpha_{i}`
-    = NumberedTypeVariable Int
+    = Numbered Int
     -- Named variables are used to denote variables that belong to free variables in a term
     -- They are displayed as `\tau_{x}`, read: "Type of `x`"
-    | NamedTypeVariable String
+    | Named String
     -- Type of a function that maps the left type to the right one
-    | FunctionType Type Type
-    -- TODO: const
 
 viewType t =
     case t of
-        NumberedTypeVariable i ->
-            span [ class "type-var" ]
-                [ text "α"
-                , span [ class "type-var-id" ] [ text <| String.fromInt i ]
-                ]
-        NamedTypeVariable name ->
-            span [ class "type-var" ]
-                [ text "τ"
-                , span [ class "type-var-id" ] [ text name ]
-                ]
+        TypeVar tv ->
+            case tv of
+                Numbered i ->
+                    span [ class "type-var" ]
+                        [ text "α"
+                        , span [ class "type-var-id" ] [ text <| String.fromInt i ]
+                        ]
+                Named name ->
+                    span [ class "type-var" ]
+                        [ text "τ"
+                        , span [ class "type-var-id" ] [ text name ]
+                        ]
         FunctionType f x ->
             let
                 fHtml =
@@ -86,7 +92,7 @@ generateTree =
         generateTreeN : TypeContext -> Int -> Int -> Lambda.Term -> (Tree, Int)
         generateTreeN ctx currVarId nextVarId term =
             let
-                currVar = NumberedTypeVariable currVarId
+                currVar = TypeVar <| Numbered currVarId
                 makeTree = Tree ctx term currVar
             in
             case term of
@@ -95,7 +101,7 @@ generateTree =
                         t =
                             case ctxLookup varName ctx of
                                 -- If the variable is free, give it a named type variable
-                                Nothing -> NamedTypeVariable varName
+                                Nothing -> TypeVar <| Named varName
                                 -- Otherwise, use the one in the given context
                                 Just x  -> x
                     in
@@ -103,7 +109,7 @@ generateTree =
                 Lambda.Abs param body ->
                     let
                         -- Insert a new entry for "param" into the context
-                        paramType = NumberedTypeVariable nextVarId
+                        paramType = TypeVar <| Numbered nextVarId
                         newCtx = ctx ++ [(param, paramType)]
                         (bodyTree, restVar) = generateTreeN newCtx (nextVarId + 1) (nextVarId + 2) body
                     in
