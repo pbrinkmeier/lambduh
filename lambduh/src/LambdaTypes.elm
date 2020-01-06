@@ -128,7 +128,7 @@ generateTree =
                                 -- That is, create new variables for every bound variable in the type schema
                                 Just x  -> instantiate nextVarId x
                     in
-                    (makeTree <| VarNode varName t, nextVarId)
+                    (makeTree <| VarNode varName t, restVarId)
                 Lambda.Abs param body ->
                     let
                         -- Insert a new entry for "param" into the context

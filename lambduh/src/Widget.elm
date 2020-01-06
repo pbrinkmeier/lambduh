@@ -54,7 +54,7 @@ possibleActions widget =
                     [ ("+ unify", AddUnificationWidget constraints)
                     ]
                 UnificationWidget _ _ ->
-                    [ -- TODO: maybe "apply unifier to alpha_1"?
+                    [
                     ]
     in
     List.map (\(l, f) -> (l, f widget.id)) pas
