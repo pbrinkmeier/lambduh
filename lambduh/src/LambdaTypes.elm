@@ -146,7 +146,7 @@ generateTree =
                         (makeTree <| AppNode fTree xTree, restVarId)
                 Lambda.Let name value inTerm ->
                     let
-                        (valueTree, sndNextVarId) = generateTreeN ctx nextVarId (nextVarId + 1) value
+                        (valueTree, sndNextVarId) = generateTreeN ctx nextVarId (nextVarId + 2) value
                         letConstraints = extractConstraints valueTree
                         -- todo: handle errors
                         letUnifier = Result.withDefault [] <| unify letConstraints
@@ -155,7 +155,7 @@ generateTree =
                         valueType = bindFreeVariables newContext <| applyUnifierToType letUnifier (TypeVar <| Numbered nextVarId)
 
                         newContextWithBinding = newContext ++ [ (name, valueType) ]
-                        (inTermTree, restVarId) = generateTreeN newContextWithBinding sndNextVarId (sndNextVarId + 1) inTerm
+                        (inTermTree, restVarId) = generateTreeN newContextWithBinding (nextVarId + 1) (sndNextVarId) inTerm
                     in
                         -- TODO:
                         -- letConstraints has already been simplified by unification
